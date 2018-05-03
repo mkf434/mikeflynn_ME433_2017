@@ -48,19 +48,31 @@
 /*
  * 
  */
-int main(int argc, char** argv) {
-     __builtin_disable_interrupts();                                 // disable the interrupts         
-    __builtin_mtc0(_CP0_CONFIG, _CP0_CONFIG_SELECT, 0xa4210583);    // set the CP0 CONFIG register to indicate that kseg0 is cacheable (0x3)
-    BMXCONbits.BMXWSDRM = 0x0;                                      // 0 data RAM access wait states
-    INTCONbits.MVEC = 0x1;                                          // enable multi vector interrupts
-    DDPCONbits.JTAGEN = 0;                                          // disable JTAG to get pins back
-    
-    TRISAbits.TRISA4 = 0;                                           // A4 is a digital output
-    LATAbits.LATA4 = 0;                                             // A4 is on initially
 
-    __builtin_enable_interrupts();
+
+int main(int argc, char** argv) {
+
+    TRISAbits.TRISA4 = 0;                                   // A4 is a digital output
+    LATAbits.LATA4 = 0;                                     // A4 is on initially
     
-    while(1){};
+    //TRISBbits.TRISB4 = 1;                                   // A4 is a digital input
+    
+    
+    while(1) {
+        
+        while(!PORTBbits.RB4) {
+            _CP0_SET_COUNT(0);                                  // Set count to 0                        
+            while(_CP0_GET_COUNT() < 12000) {};                 // Wait .5 ms
+
+            LATAbits.LATA4 = 1;                                 // A4 off
+
+            _CP0_SET_COUNT(0); 
+            while(_CP0_GET_COUNT() < 12000) {};
+
+            LATAbits.LATA4 = 0;                                 // A4 on
+
+        };
+    };     
 
     return (EXIT_SUCCESS);
 }
