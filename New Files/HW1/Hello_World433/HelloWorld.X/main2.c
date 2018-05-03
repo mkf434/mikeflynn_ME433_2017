@@ -51,11 +51,21 @@
 
 
 int main(int argc, char** argv) {
-
+    
+    
+    __builtin_disable_interrupts();
+    
+    __builtin_mtc0(_CP0_CONFIG, _CP0_CONFIG_SELECT, 0xa4210583);
+    
+    BMXCONbits.BMXWSDRM = 0x0;                              // 0 data RAM access wait states
+    INTCONbits.MVEC = 0x1;                                  // enable multi vector interrupts
+    DDPCONbits.JTAGEN = 0;                                  // disable JTAG to get pins back
+    
     TRISAbits.TRISA4 = 0;                                   // A4 is a digital output
     LATAbits.LATA4 = 0;                                     // A4 is on initially
-    
-    //TRISBbits.TRISB4 = 1;                                   // A4 is a digital input
+
+    __builtin_enable_interrupts();
+
     
     
     while(1) {
