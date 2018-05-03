@@ -13,7 +13,6 @@
 
 #include<xc.h>                                  // processor SFR definitions
 #include<sys/attribs.h>                         // __ISR macro
-#include "NU32.h"                               // basic pic functions
 
 // DEVCFG0
 #pragma config DEBUG = OFF                      // no debugging
