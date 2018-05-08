@@ -52,8 +52,8 @@
 // Helper Function Prototypes
 
 void setupSPI(void);            // Initializing everything needed to use SPI1
-void writeSPI(int buf[]);        // Update the SPI buffer
-int * makeMessage(int x);        // Generate the next message to get the correct output voltage from MCP4902
+void writeSPI(int buf);         // Update the SPI buffer
+int * makeMessage(int x);       // Generate the next message to get the correct output voltage from MCP4902
 
 // Main Function
 
@@ -69,10 +69,13 @@ int main(void) {
     
     
     while(1) {
-         
-        while(_CP0_GET_COUNT() < 24000000) {};            // Wait 1 s
-        writeSPI(0x7FFF);
         
+        //writeSPI(0x0000);
+        writeSPI(0xFFFF);
+        //writeSPI(0x0FFF);
+        writeSPI(0xF000);
+        
+    
     }
     
     
@@ -87,7 +90,7 @@ void setupSPI(void) {
 
     RPB14Rbits.RPB14R = 0b0011;     // SCK1 is B14
     RPB8Rbits.RPB8R = 0b0011;       // SDO1 is B8
-    RPB7Rbits.RPB7R = 0b0011;       // SS1 is B7
+    //RPB7Rbits.RPB7R = 0b0011;       // SS1 is B7
     
     SPI1BUF;                        // Clear the Rx Buffer      
     SPI1BRG = 0x1;                  // Set Baud Rate to 12 MHz, (50MHz/2*12MHz)-1 >= 1
@@ -108,7 +111,7 @@ void setupSPI(void) {
     DDPCONbits.JTAGEN = 0;                                  // disable JTAG to get pins back
     
     TRISAbits.TRISA4 = 0;                                   // A4 is a digital output
-    LATAbits.LATA4 = 1;                                     // A4 is off initially
+    LATAbits.LATA4 = 1;                                     // A4 is on initially
 
     __builtin_enable_interrupts();
     
@@ -116,10 +119,22 @@ void setupSPI(void) {
 
 void writeSPI(int buf) {
     
+    LATAbits.LATA4 = 0;
+    _CP0_SET_COUNT(0);
+    while(_CP0_GET_COUNT() < 24000000) {};            // Wait 1 s
+    
+    while(SPI1STATbits.SPIBUSY) {;}
+    
     LATBbits.LATB7 = 0;
     SPI1BUF = buf;
     while(SPI1STATbits.SPIBUSY) {;}
+    LATAbits.LATA4 = 1;
     LATBbits.LATB7 = 1;
+    
+    _CP0_SET_COUNT(0);
+    while(_CP0_GET_COUNT() < 24000000) {};            // Wait 1 s
+    
+
 
 }
 
