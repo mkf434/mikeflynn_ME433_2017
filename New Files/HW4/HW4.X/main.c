@@ -69,28 +69,10 @@ int main(void) {
     
     
     while(1) {
-        
-        _CP0_SET_COUNT(0);                             // Reset CPO count    
-        
-        LATBbits.LATB7 = 0;             // SS1(B7) low to start transfer
-        SPI1BUF = 0x7000;                // Write message to buffer
-        LATBbits.LATB7 = 1;             // SS1(B7) high to end message
-        
-        LATAbits.LATA4 = 1;                 // Turn on A4 if the program gets here
-    
          
         while(_CP0_GET_COUNT() < 24000000) {};            // Wait 1 s
-         
-        _CP0_SET_COUNT(0);                             // Reset CPO count    
+        writeSPI(0x7FFF);
         
-        LATBbits.LATB7 = 0;             // SS1(B7) low to start transfer
-        SPI1BUF = 0x7FFF;                // Write message to buffer
-        LATBbits.LATB7 = 1;             // SS1(B7) high to end message
-        
-        LATAbits.LATA4 = 0;                 // Turn on A4 if the program gets here
-    
-         
-        while(_CP0_GET_COUNT() < 24000000) {};            // Wait 1 s
     }
     
     
@@ -111,12 +93,13 @@ void setupSPI(void) {
     SPI1BRG = 0x1;                  // Set Baud Rate to 12 MHz, (50MHz/2*12MHz)-1 >= 1
     SPI1STATbits.SPIROV = 0;        // Clear the overflow bit
     SPI1CONbits.SSEN = 0;           // disable automatic control of SS1
+    SPI1CONbits.MSTEN = 1;          // SPI1 is a master
     SPI1CONbits.MODE32 = 0;         // Disable 32 bit mode
     SPI1CONbits.MODE16 = 1;         // Enable 16 bit mode
-    SPI1CONbits.ON = 1; 
+    SPI1CONbits.ON = 1;             // SPI is on
     
     TRISBbits.TRISB7 = 0;           // B7 is a digital output
-    LATBbits.LATB7 = 1;             // B7 is off initially
+    LATBbits.LATB7 = 1;             // B7 is on initially
     
     __builtin_mtc0(_CP0_CONFIG, _CP0_CONFIG_SELECT, 0xa4210583);
     
@@ -125,16 +108,18 @@ void setupSPI(void) {
     DDPCONbits.JTAGEN = 0;                                  // disable JTAG to get pins back
     
     TRISAbits.TRISA4 = 0;                                   // A4 is a digital output
-    LATAbits.LATA4 = 0;                                     // A4 is off initially
+    LATAbits.LATA4 = 1;                                     // A4 is off initially
 
     __builtin_enable_interrupts();
     
 }
 
-void writeSPI(int buf[]) {
+void writeSPI(int buf) {
     
-    SPI1BUF = buf[0]; 
-    // Mike was here
+    LATBbits.LATB7 = 0;
+    SPI1BUF = buf;
+    while(SPI1STATbits.SPIBUSY) {;}
+    LATBbits.LATB7 = 1;
 
 }
 
