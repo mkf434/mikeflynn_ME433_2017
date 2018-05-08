@@ -51,17 +51,46 @@
 
 // Helper Function Prototypes
 
-void setupSPI(void);
+void setupSPI(void);            // Initializing everything needed to use SPI1
+void writeSPI(int buf[]);        // Update the SPI buffer
+int * makeMessage(int x);        // Generate the next message to get the correct output voltage from MCP4902
 
 // Main Function
 
 int main(void) {
-
-    char buf[100] = {};         // Init Buffer
+    
+    setupSPI();
+    
+    int bufA1[4]; 
+    int bufA2[4];
+    
+    bufA1[0] = 0x7560;         // Init A Buffer
+    bufA2[0] = 0x7000;         // Init B Buffer
+    
     
     while(1) {
-        unsigned short master_message = 0;
-        SPI1BUF = master_message;
+        
+        _CP0_SET_COUNT(0);                             // Reset CPO count    
+        
+        LATBbits.LATB7 = 0;             // SS1(B7) low to start transfer
+        SPI1BUF = 0x7000;                // Write message to buffer
+        LATBbits.LATB7 = 1;             // SS1(B7) high to end message
+        
+        LATAbits.LATA4 = 1;                 // Turn on A4 if the program gets here
+    
+         
+        while(_CP0_GET_COUNT() < 24000000) {};            // Wait 1 s
+         
+        _CP0_SET_COUNT(0);                             // Reset CPO count    
+        
+        LATBbits.LATB7 = 0;             // SS1(B7) low to start transfer
+        SPI1BUF = 0x7FFF;                // Write message to buffer
+        LATBbits.LATB7 = 1;             // SS1(B7) high to end message
+        
+        LATAbits.LATA4 = 0;                 // Turn on A4 if the program gets here
+    
+         
+        while(_CP0_GET_COUNT() < 24000000) {};            // Wait 1 s
     }
     
     
@@ -72,6 +101,8 @@ int main(void) {
 
 void setupSPI(void) {
     
+    __builtin_disable_interrupts();
+
     RPB14Rbits.RPB14R = 0b0011;     // SCK1 is B14
     RPB8Rbits.RPB8R = 0b0011;       // SDO1 is B8
     RPB7Rbits.RPB7R = 0b0011;       // SS1 is B7
@@ -79,13 +110,34 @@ void setupSPI(void) {
     SPI1BUF;                        // Clear the Rx Buffer      
     SPI1BRG = 0x1;                  // Set Baud Rate to 12 MHz, (50MHz/2*12MHz)-1 >= 1
     SPI1STATbits.SPIROV = 0;        // Clear the overflow bit
-    SPI1CONbits.MSSEN = 0;          // Disable automatic control of SS1
-    SPI1CONbits.MODE32 = 0;         // Disable 
-    SPI1CONbits.MODE16 = 1; 
+    SPI1CONbits.SSEN = 0;           // disable automatic control of SS1
+    SPI1CONbits.MODE32 = 0;         // Disable 32 bit mode
+    SPI1CONbits.MODE16 = 1;         // Enable 16 bit mode
     SPI1CONbits.ON = 1; 
     
     TRISBbits.TRISB7 = 0;           // B7 is a digital output
-    LATBbits.LATB7 = 0;             // B7 is off initially
+    LATBbits.LATB7 = 1;             // B7 is off initially
+    
+    __builtin_mtc0(_CP0_CONFIG, _CP0_CONFIG_SELECT, 0xa4210583);
+    
+    BMXCONbits.BMXWSDRM = 0x0;                              // 0 data RAM access wait states
+    INTCONbits.MVEC = 0x1;                                  // enable multi vector interrupts
+    DDPCONbits.JTAGEN = 0;                                  // disable JTAG to get pins back
+    
+    TRISAbits.TRISA4 = 0;                                   // A4 is a digital output
+    LATAbits.LATA4 = 0;                                     // A4 is off initially
+
+    __builtin_enable_interrupts();
     
 }
 
+void writeSPI(int buf[]) {
+    
+    SPI1BUF = buf[0]; 
+    // Mike was here
+
+}
+
+int * makeMessage(int x) {
+    
+}

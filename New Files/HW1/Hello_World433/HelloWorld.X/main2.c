@@ -62,7 +62,7 @@ int main(int argc, char** argv) {
     DDPCONbits.JTAGEN = 0;                                  // disable JTAG to get pins back
     
     TRISAbits.TRISA4 = 0;                                   // A4 is a digital output
-    LATAbits.LATA4 = 0;                                     // A4 is on initially
+    LATAbits.LATA4 = 0;                                     // A4 is off initially
 
     __builtin_enable_interrupts();
 
