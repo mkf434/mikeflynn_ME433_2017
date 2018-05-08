@@ -1423,8 +1423,8 @@ LOAD data_init
 .text           0x9d000000      0x2d8
  .text          0x9d000000      0x2d8 build/default/production/main.o
                 0x9d000000                main
-                0x9d000048                setupSPI
-                0x9d0001b4                writeSPI
+                0x9d00006c                setupSPI
+                0x9d0001d8                writeSPI
                 0x9d0002b4                makeMessage
 
 .text.general_exception

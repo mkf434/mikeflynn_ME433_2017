@@ -70,10 +70,10 @@ int main(void) {
     
     while(1) {
         
-        //writeSPI(0x0000);
-        writeSPI(0xFFFF);
-        //writeSPI(0x0FFF);
-        writeSPI(0xF000);
+        LATAbits.LATA4 = 0;
+        writeSPI(0xDFF0);
+        LATAbits.LATA4 = 1;
+        writeSPI(0xFFF0);
         
     
     }
@@ -119,7 +119,7 @@ void setupSPI(void) {
 
 void writeSPI(int buf) {
     
-    LATAbits.LATA4 = 0;
+    
     _CP0_SET_COUNT(0);
     while(_CP0_GET_COUNT() < 24000000) {};            // Wait 1 s
     
@@ -128,7 +128,7 @@ void writeSPI(int buf) {
     LATBbits.LATB7 = 0;
     SPI1BUF = buf;
     while(SPI1STATbits.SPIBUSY) {;}
-    LATAbits.LATA4 = 1;
+    
     LATBbits.LATB7 = 1;
     
     _CP0_SET_COUNT(0);
