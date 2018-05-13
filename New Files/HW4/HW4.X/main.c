@@ -49,37 +49,51 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define PI 3.14159265
 // Helper Function Prototypes
 
 void setupSPI(void);            // Initializing everything needed to use SPI1
 void writeSPI(int buf);         // Update the SPI buffer
 int * makeMessage(int x);       // Generate the next message to get the correct output voltage from MCP4902
+int makeWaves(int x);
+void triangleA(int y);
 
 // Main Function
 
 int main(void) {
     
     setupSPI();
-    
-    int bufA1[4]; 
-    int bufA2[4];
-    
-    bufA1[0] = 0x7560;         // Init A Buffer
-    bufA2[0] = 0x7000;         // Init B Buffer
-    
-    
+    int y = 0;
+    int yconst = 200;
+    unsigned int y2 = 0;
+    int x = 0x7000;
+    int x2 = 0xF000;
+    int z = 0x000;
+    double angle = 0;
+    double ret = 0;
+    double val;
+     
     while(1) {
+        _CP0_SET_COUNT(0);
+        ret = (double) y;
+        if(ret<100){ret = ret + 1;} else {ret = ret - 1;}
+        //if(angle > 6.25) { angle = 0; } else { angle = angle + 0.0314;} 
+        //if(ret<100) {angle = 0.01*ret;} else if(y>99) {angle = 0.01*ret;}
+        //ret = (val*100);
+        //ret = ret + 100;
         
-        LATAbits.LATA4 = 0;
-        writeSPI(0xDFF0);
-        LATAbits.LATA4 = 1;
-        writeSPI(0xFFF0);
-        
+        //et = 100 + (100*(sin(angle*val)));
+        val = (ret*PI/100);
+        y2 = (100 + (100*sin(val)));
     
-    }
-    
+        if(y==200) { y = 0; } else { y = y + 1;}  
+        while(_CP0_GET_COUNT() < 24000){;}
+        writeSPI((x)|(y<<4)|(z));
+        writeSPI((x2)|(y2<<4)|(z));
+    } 
     
     return (EXIT_SUCCESS);
+    
 }
 
 // Helper Functions
@@ -120,8 +134,9 @@ void setupSPI(void) {
 void writeSPI(int buf) {
     
     
-    _CP0_SET_COUNT(0);
-    while(_CP0_GET_COUNT() < 24000000) {};            // Wait 1 s
+    //int z = _CP0_GET_COUNT();
+    //z = z + 200;
+    //while(_CP0_GET_COUNT() < z) {};            // Wait .05 ms
     
     while(SPI1STATbits.SPIBUSY) {;}
     
@@ -131,13 +146,105 @@ void writeSPI(int buf) {
     
     LATBbits.LATB7 = 1;
     
-    _CP0_SET_COUNT(0);
-    while(_CP0_GET_COUNT() < 24000000) {};            // Wait 1 s
+    //z = z + 200;
+    //while(_CP0_GET_COUNT() < z) {};            // Wait .05 ms
     
 
 
 }
 
-int * makeMessage(int x) {
+int makeWave(int x) {
     
+    unsigned int sinVALS[50]; 
+    sinVALS[0] = 100; 
+    sinVALS[1] = 106; 
+    sinVALS[2] = 113;
+    sinVALS[3] = 119;
+    sinVALS[4] = 125; 
+    sinVALS[5] = 131; 
+    sinVALS[6] = 137;
+    sinVALS[7] = 143; 
+    sinVALS[8] = 148; 
+    sinVALS[9] = 154; 
+    sinVALS[10] = 159; 
+    sinVALS[11] = 164;
+    sinVALS[12] = 169; 
+    sinVALS[13] = 173; 
+    sinVALS[14] = 177; 
+    sinVALS[15] = 181; 
+    sinVALS[16] = 185;
+    sinVALS[17] = 188; 
+    sinVALS[18] = 162; 
+    sinVALS[19] = 165; 
+    sinVALS[20] = 169; 
+    sinVALS[21] = 172;
+    sinVALS[22] = 175; 
+    sinVALS[23] = 179; 
+    sinVALS[24] = 182; 
+    sinVALS[25] = 185; 
+    sinVALS[26] = 188;
+    sinVALS[27] = 191; 
+    sinVALS[28] = 194; 
+    sinVALS[29] = 197; 
+    sinVALS[30] = 200; 
+    sinVALS[31] = 203;
+    sinVALS[32] = 206; 
+    sinVALS[33] = 209; 
+    sinVALS[34] = 212; 
+    sinVALS[35] = 215; 
+    sinVALS[36] = 217;
+    sinVALS[37] = ; 
+    sinVALS[38] = ; 
+    sinVALS[39] = ; 
+    sinVALS[40] = ;
+    sinVALS[41] = ;
+    sinVALS[42] = ;
+    sinVALS[43] = ; 
+    sinVALS[44] = ; 
+    sinVALS[45] = ; 
+    sinVALS[46] = ; 
+    sinVALS[47] = ;
+    sinVALS[48] = ; 
+    sinVALS[49] = ; 
+  
+
+void triangleA(int y) {
+    
+    
+    
+    //writeSPI((x2)|(y2<<8)|(z));
+    
+    
+    
+    
+    //while(1) { 
+    //    _CP0_SET_COUNT(0);
+    //    if(y = 0xFF) {
+    //        y = 0x00;
+    //    } else { 
+                   
+                    
+                   
+    //           }
+    // while (_CP0_GET_COUNT() < 24000) {;}
+    }
+
+    
+    int addOne(int x) {
+    int m = 1;
+     
+    // Flip all the set bits 
+    // until we find a 0 
+    while( x & m )
+    {
+        x = x ^ m;
+        m <<= 1;
+    }
+     
+    // flip the rightmost 0 bit 
+    x = x ^ m;
+    return x;
 }
+        
+
+
