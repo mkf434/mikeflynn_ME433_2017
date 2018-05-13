@@ -64,32 +64,33 @@ int main(void) {
     
     setupSPI();
     int y = 0;
-    int yconst = 200;
-    unsigned int y2 = 0;
+    int yconst = 0;
+    int y2 = 0;
     int x = 0x7000;
     int x2 = 0xF000;
     int z = 0x000;
     double angle = 0;
     double ret = 0;
     double val;
+    
      
     while(1) {
         _CP0_SET_COUNT(0);
-        ret = (double) y;
-        if(ret<100){ret = ret + 1;} else {ret = ret - 1;}
+        //ret = (double) y;
+        //if(ret<100){ret = ret + 1;} else {ret = ret - 1;}
         //if(angle > 6.25) { angle = 0; } else { angle = angle + 0.0314;} 
         //if(ret<100) {angle = 0.01*ret;} else if(y>99) {angle = 0.01*ret;}
         //ret = (val*100);
         //ret = ret + 100;
         
         //et = 100 + (100*(sin(angle*val)));
-        val = (ret*PI/100);
-        y2 = (100 + (100*sin(val)));
+        if(y2==100) { y2 = 0; } else { y2 = y2 + 1;} 
+        yconst = makeWave(y2);
     
         if(y==200) { y = 0; } else { y = y + 1;}  
         while(_CP0_GET_COUNT() < 24000){;}
         writeSPI((x)|(y<<4)|(z));
-        writeSPI((x2)|(y2<<4)|(z));
+        writeSPI((x2)|(yconst<<4)|(z));
     } 
     
     return (EXIT_SUCCESS);
@@ -155,7 +156,8 @@ void writeSPI(int buf) {
 
 int makeWave(int x) {
     
-    unsigned int sinVALS[50]; 
+    int sinVALS[51];
+    
     sinVALS[0] = 100; 
     sinVALS[1] = 106; 
     sinVALS[2] = 113;
@@ -174,39 +176,43 @@ int makeWave(int x) {
     sinVALS[15] = 181; 
     sinVALS[16] = 185;
     sinVALS[17] = 188; 
-    sinVALS[18] = 162; 
-    sinVALS[19] = 165; 
-    sinVALS[20] = 169; 
-    sinVALS[21] = 172;
-    sinVALS[22] = 175; 
-    sinVALS[23] = 179; 
-    sinVALS[24] = 182; 
-    sinVALS[25] = 185; 
-    sinVALS[26] = 188;
-    sinVALS[27] = 191; 
-    sinVALS[28] = 194; 
-    sinVALS[29] = 197; 
-    sinVALS[30] = 200; 
-    sinVALS[31] = 203;
-    sinVALS[32] = 206; 
-    sinVALS[33] = 209; 
-    sinVALS[34] = 212; 
-    sinVALS[35] = 215; 
-    sinVALS[36] = 217;
-    sinVALS[37] = ; 
-    sinVALS[38] = ; 
-    sinVALS[39] = ; 
-    sinVALS[40] = ;
-    sinVALS[41] = ;
-    sinVALS[42] = ;
-    sinVALS[43] = ; 
-    sinVALS[44] = ; 
-    sinVALS[45] = ; 
-    sinVALS[46] = ; 
-    sinVALS[47] = ;
-    sinVALS[48] = ; 
-    sinVALS[49] = ; 
+    sinVALS[18] = 191; 
+    sinVALS[19] = 193; 
+    sinVALS[20] = 197; 
+    sinVALS[21] = 198;
+    sinVALS[22] = 199; 
+    sinVALS[23] = 200; 
+    sinVALS[24] = 200; 
+    sinVALS[25] = 200; 
+    sinVALS[26] = 200;
+    sinVALS[27] = 199; 
+    sinVALS[28] = 197; 
+    sinVALS[29] = 195; 
+    sinVALS[30] = 193; 
+    sinVALS[31] = 191;
+    sinVALS[32] = 188; 
+    sinVALS[33] = 185; 
+    sinVALS[34] = 181; 
+    sinVALS[35] = 177; 
+    sinVALS[36] = 173;
+    sinVALS[37] = 169; 
+    sinVALS[38] = 164; 
+    sinVALS[39] = 159; 
+    sinVALS[40] = 154;
+    sinVALS[41] = 148;
+    sinVALS[42] = 143;
+    sinVALS[43] = 137; 
+    sinVALS[44] = 131; 
+    sinVALS[45] = 125; 
+    sinVALS[46] = 119; 
+    sinVALS[47] = 112;
+    sinVALS[48] = 106; 
+    sinVALS[49] = 101; 
+    sinVALS[50] = 100; 
+    
+    if(x<50){ return(sinVALS[x]); } else { return(200-sinVALS[x-50]);}
   
+}
 
 void triangleA(int y) {
     
