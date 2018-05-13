@@ -1,12 +1,14 @@
 /* 
  * File:   main.c
- * Author: mkf434
- *
+ * Author: Mike Flynn
  * Created on May 7, 2018, 1:39 PM
+ * 
+ * The purpose of the program is to use the PIC32MX250F128B along with 
+ *  a MCP4902 DAC and an Nscope to output a 5Hz triangular wave and a 
+ *  10 Hz sine wave from the two outputs of the MCP4902
  */
 
 // Preprocessor Commands
-
 
 // DEVCFG3
 // USERID = No Setting
@@ -42,55 +44,45 @@
 #pragma config BWP = OFF                // Boot Flash Write Protect bit (Protection Disabled)
 #pragma config CP = OFF                 // Code Protect (Protection Disabled)
 
-// #pragma config statements should precede project file includes.
-// Use project enums instead of #define for ON and OFF.
+// Header Files
 
 #include <xc.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#define PI 3.14159265
+#define PI 3.14159265               // Pi constant
+
 // Helper Function Prototypes
 
 void setupSPI(void);            // Initializing everything needed to use SPI1
 void writeSPI(int buf);         // Update the SPI buffer
-int * makeMessage(int x);       // Generate the next message to get the correct output voltage from MCP4902
-int makeWaves(int x);
-void triangleA(int y);
+int makeWaves(int x);           // Generating the SPI bytes to send to the mcp
 
 // Main Function
 
 int main(void) {
     
     setupSPI();
-    int y = 0;
-    int yconst = 0;
-    int y2 = 0;
-    int x = 0x7000;
-    int x2 = 0xF000;
-    int z = 0x000;
-    double angle = 0;
-    double ret = 0;
-    double val;
+    int y = 0;                      // triangle wave update counter and input value
+    int yconst = 0;                 // sine wave input value
+    int y2 = 0;                     // sine wave update counter
+    int x = 0x7000;                 // first byte as 7 sets channel a register
+    int x2 = 0xF000;                // first byte as F sets channel b register
+    int z = 0x000;                  // MCP4902 only uses 3/4 bytes, need the last byte to properly load the register
     
      
     while(1) {
-        _CP0_SET_COUNT(0);
-        //ret = (double) y;
-        //if(ret<100){ret = ret + 1;} else {ret = ret - 1;}
-        //if(angle > 6.25) { angle = 0; } else { angle = angle + 0.0314;} 
-        //if(ret<100) {angle = 0.01*ret;} else if(y>99) {angle = 0.01*ret;}
-        //ret = (val*100);
-        //ret = ret + 100;
+        _CP0_SET_COUNT(0);                              //Updates are 1 ms long
         
-        //et = 100 + (100*(sin(angle*val)));
-        if(y2==100) { y2 = 0; } else { y2 = y2 + 1;} 
-        yconst = makeWave(y2);
+        if(y2==100) { y2 = 0; } else { y2 = y2 + 1;}    //10Hz sine wave so only 100, 1 ms updates
+        yconst = makeWave(y2);                          // Determine the SPI bytes to send
     
-        if(y==200) { y = 0; } else { y = y + 1;}  
-        while(_CP0_GET_COUNT() < 24000){;}
-        writeSPI((x)|(y<<4)|(z));
-        writeSPI((x2)|(yconst<<4)|(z));
+        if(y==200) { y = 0; } else { y = y + 1;}        // 5Hz triangle wave so only 200, 1 ms updates
+        
+        while(_CP0_GET_COUNT() < 24000){;}              // Wait to update value until the rest of the 1 ms has passed
+        
+        writeSPI((x)|(y<<4)|(z));                       // piece together message using bitwise shifting and or comparisons
+        writeSPI((x2)|(yconst<<4)|(z));                 // same as above except this is for Vout b, previous line for Vouta
     } 
     
     return (EXIT_SUCCESS);
@@ -105,7 +97,7 @@ void setupSPI(void) {
 
     RPB14Rbits.RPB14R = 0b0011;     // SCK1 is B14
     RPB8Rbits.RPB8R = 0b0011;       // SDO1 is B8
-    //RPB7Rbits.RPB7R = 0b0011;       // SS1 is B7
+    //RPB7Rbits.RPB7R = 0b0011;     // SS1 is B7
     
     SPI1BUF;                        // Clear the Rx Buffer      
     SPI1BRG = 0x1;                  // Set Baud Rate to 12 MHz, (50MHz/2*12MHz)-1 >= 1
@@ -132,38 +124,28 @@ void setupSPI(void) {
     
 }
 
-void writeSPI(int buf) {
+void writeSPI(int buf) {                    // Update the SPI buffer        
     
+    while(SPI1STATbits.SPIBUSY) {;}         // Wait until you can access the buffer
     
-    //int z = _CP0_GET_COUNT();
-    //z = z + 200;
-    //while(_CP0_GET_COUNT() < z) {};            // Wait .05 ms
+    LATBbits.LATB7 = 0;                     // Slave/Chip select low to start SPI protocol
+    SPI1BUF = buf;                          // Write updated command to buffer
+    while(SPI1STATbits.SPIBUSY) {;}         // wait until the buffer is done writing
     
-    while(SPI1STATbits.SPIBUSY) {;}
+    LATBbits.LATB7 = 1;                     // Slave/Chip select high to latch registers and execute update
     
-    LATBbits.LATB7 = 0;
-    SPI1BUF = buf;
-    while(SPI1STATbits.SPIBUSY) {;}
-    
-    LATBbits.LATB7 = 1;
-    
-    //z = z + 200;
-    //while(_CP0_GET_COUNT() < z) {};            // Wait .05 ms
-    
-
-
 }
 
-int makeWave(int x) {
+int makeWave(int x) {                       // Generating the SPI bytes to send to the mcp
     
-    int sinVALS[51];
+    int sinVALS[51];                        // Int array of sign values
     
-    sinVALS[0] = 100; 
-    sinVALS[1] = 106; 
-    sinVALS[2] = 113;
-    sinVALS[3] = 119;
-    sinVALS[4] = 125; 
-    sinVALS[5] = 131; 
+    sinVALS[0] = 100;                       // Used calculator to calculate these values 
+    sinVALS[1] = 106;                       // for f(x) = ((1.65sin(x)+1.65)/4.2)*255
+    sinVALS[2] = 113;                       // where Vmax is 4.2 due to MCP4902 leeching
+    sinVALS[3] = 119;                       // operational power from Vref since Vdd is NC
+    sinVALS[4] = 125;                       // and times 255 to get into terms of MCP step sizes
+    sinVALS[5] = 131;                       // with delta x = 2*pi/100
     sinVALS[6] = 137;
     sinVALS[7] = 143; 
     sinVALS[8] = 148; 
@@ -207,50 +189,10 @@ int makeWave(int x) {
     sinVALS[46] = 119; 
     sinVALS[47] = 112;
     sinVALS[48] = 106; 
-    sinVALS[49] = 101; 
-    sinVALS[50] = 100; 
+    sinVALS[49] = 101;                  // Here return the value if 0 < x < pi
+    sinVALS[50] = 100;                  // and return the negative half of the 
+                                        // wave if pi < x < 2*pi
     
     if(x<50){ return(sinVALS[x]); } else { return(200-sinVALS[x-50]);}
   
 }
-
-void triangleA(int y) {
-    
-    
-    
-    //writeSPI((x2)|(y2<<8)|(z));
-    
-    
-    
-    
-    //while(1) { 
-    //    _CP0_SET_COUNT(0);
-    //    if(y = 0xFF) {
-    //        y = 0x00;
-    //    } else { 
-                   
-                    
-                   
-    //           }
-    // while (_CP0_GET_COUNT() < 24000) {;}
-    }
-
-    
-    int addOne(int x) {
-    int m = 1;
-     
-    // Flip all the set bits 
-    // until we find a 0 
-    while( x & m )
-    {
-        x = x ^ m;
-        m <<= 1;
-    }
-     
-    // flip the rightmost 0 bit 
-    x = x ^ m;
-    return x;
-}
-        
-
-
