@@ -64,11 +64,16 @@ void setExpander(char pin, char level);
 char getExpander();
 
 // Main Function
-int main(int argc, char** argv) {
+void main(void) {
     
+    i2c_master_setup();               // init I2C2, which we use as a master  
+    char level = 0; 
+    char pin = 1; 
     
-    i2c_master_setup();             // init I2C2
-    
+    while(1){
+        level =  getExpander();
+        setExpander(char pin, char level);
+    }
     
 
     return (EXIT_SUCCESS);
@@ -164,16 +169,26 @@ char getExpander(){                    // Get value of inputs from MCP23008
 }
 
 void setExpander(char pin, char level){
-    
+  
   unsigned char OLAT_REG = 0xF0;       // OLAT register address on MCP23008
   unsigned char LED_ON = 0x01;         // Make GP0 high, turning on the LED
   unsigned char LED_OFF = 0x00;        // Make Gp0 low, turning off the LED
-    
-  i2c_master_start();                  // Begin the start sequence
-  i2c_master_send(SLAVE_ADDR);         // send the slave address
-  i2c_master_send(OLAT_REG);           // send iodir register address     
-  i2c_master_send(SET_OLAT);           // send iodir register bit values
-  i2c_master_stop(); 
+  
+  if(pin && level) 
+    {
+        i2c_master_start();                  // Begin the start sequence
+        i2c_master_send(SLAVE_ADDR);         // send the slave address
+        i2c_master_send(OLAT_REG);           // send iodir register address     
+        i2c_master_send(LED_ON);             // send iodir register bit values
+        i2c_master_stop(); 
+    } else {
+              i2c_master_start();                  // Begin the start sequence
+              i2c_master_send(SLAVE_ADDR);         // send the slave address
+              i2c_master_send(OLAT_REG);           // send iodir register address     
+              i2c_master_send(LED_OFF);            // send iodir register bit values
+              i2c_master_stop(); 
+
+           }
     
 }
 
