@@ -49,6 +49,7 @@
 
 #define SLAVE_ADDR 0x64
 
+
 // Helper Function Prototypes
 
 void i2c_master_setup(void);
@@ -65,6 +66,7 @@ char getExpander();
 // Main Function
 int main(int argc, char** argv) {
     
+    
     i2c_master_setup();             // init I2C2
     
     
@@ -80,8 +82,11 @@ int main(int argc, char** argv) {
 // I2C pins need pull-up resistors, 2k-10k
 
 void i2c_master_setup(void) {
+  ANSELBbits.ANSB2 = 0;               // Turn of default analog input on B2 and B3
+  ANSELBbits.ANSB3 = 0;
+  
   I2C2BRG = 243;                    // I2CBRG = [1/(2*Fsck) - PGD]*Pblck - 2 
-                                    // look up PGD for your PIC32                             
+                                    // PGD = 104 ns, 100hz for now                            
   I2C2CONbits.ON = 1;               // turn on the I2C2 module
   
 }
@@ -124,15 +129,53 @@ void i2c_master_stop(void) {          // send a STOP:
 }
 
 void initExpander(){
-    ANSELBbits.ANSB2 = 0;               // Turn of default analog input on B2 and B3
-    ANSELBbits.ANSB3 = 0;
+    
+  unsigned char IODIR_REG = 0x00;      // IODIR register address on MCP23008
+  unsigned char OLAT_REG = 0xF0;       // OLAT register address on MCP23008
+  unsigned char SET_IODIR = 0x0A;      // IODIR register values to be set
+  unsigned char SET_OLAT = 0x00;       // OLAT register values to be set
+  
+  i2c_master_start();                  // Begin the start sequence
+  i2c_master_send(SLAVE_ADDR);         // send the slave address
+  i2c_master_send(IODIR_REG);          // send iodir register address     
+  i2c_master_send(SET_IODIR);          // send iodir register bit values
+  i2c_master_stop(); 
+  
+  i2c_master_start();                  // Begin the start sequence
+  i2c_master_send(SLAVE_ADDR);         // send the slave address
+  i2c_master_send(OLAT_REG);           // send iodir register address     
+  i2c_master_send(SET_OLAT);           // send iodir register bit values
+  i2c_master_stop(); 
+  
+}
+
+char getExpander(){                    // Get value of inputs from MCP23008
+    
+  i2c_master_start();                  // Begin the start sequence
+  i2c_master_send(SLAVE_ADDR);         // send the slave address
+  i2c_master_restart();                // send a RESTART so we can begin reading 
+  i2c_master_send(SLAVE_ADDR);         // send the slave address
+  char r = i2c_master_recv();          // save the value of GP7
+  i2c_master_ack(1);                   // make the ack so the slave knows we got it
+  i2c_master_stop();                   // make the stop bit
+  
+  return r;
+    
 }
 
 void setExpander(char pin, char level){
     
-}
-
-char getExpander(){
+  unsigned char OLAT_REG = 0xF0;       // OLAT register address on MCP23008
+  unsigned char LED_ON = 0x01;         // Make GP0 high, turning on the LED
+  unsigned char LED_OFF = 0x00;        // Make Gp0 low, turning off the LED
+    
+  i2c_master_start();                  // Begin the start sequence
+  i2c_master_send(SLAVE_ADDR);         // send the slave address
+  i2c_master_send(OLAT_REG);           // send iodir register address     
+  i2c_master_send(SET_OLAT);           // send iodir register bit values
+  i2c_master_stop(); 
     
 }
+
+
 
