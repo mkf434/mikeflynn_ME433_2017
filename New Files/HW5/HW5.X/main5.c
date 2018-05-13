@@ -47,6 +47,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define SLAVE_ADDR 0x64
+
 // Helper Function Prototypes
 
 void i2c_master_setup(void);
@@ -63,6 +65,8 @@ char getExpander();
 // Main Function
 int main(int argc, char** argv) {
     
+    i2c_master_setup();             // init I2C2
+    
     
 
     return (EXIT_SUCCESS);
@@ -76,10 +80,10 @@ int main(int argc, char** argv) {
 // I2C pins need pull-up resistors, 2k-10k
 
 void i2c_master_setup(void) {
-  I2C2BRG = some number for 100kHz;            
-                                    // I2CBRG = [1/(2*Fsck) - PGD]*Pblck - 2 
-                                    // look up PGD for your PIC32
-  I2C2CONbits.ON = 1;               // turn on the I2C1 module
+  I2C2BRG = 243;                    // I2CBRG = [1/(2*Fsck) - PGD]*Pblck - 2 
+                                    // look up PGD for your PIC32                             
+  I2C2CONbits.ON = 1;               // turn on the I2C2 module
+  
 }
 
 // Start a transmission on the I2C bus
@@ -120,7 +124,8 @@ void i2c_master_stop(void) {          // send a STOP:
 }
 
 void initExpander(){
-    
+    ANSELBbits.ANSB2 = 0;               // Turn of default analog input on B2 and B3
+    ANSELBbits.ANSB3 = 0;
 }
 
 void setExpander(char pin, char level){
