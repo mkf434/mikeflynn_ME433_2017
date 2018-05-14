@@ -1,9 +1,13 @@
 /* 
- * File:   main2.c
- * Author: mkf434
- *
+ * File:   main.c
+ * Author: Mike Flynn
  * Created on May 3, 2018, 3:32 PM
+ * 
+ * The purpose of this program is to use the PIC32MX250F128B to output a 
+ *  10Hz square wave onto an LED to give a dim lighting effect on the LED
  */
+
+
 // DEVCFG3
 // USERID = No Setting
 #pragma config PMDL1WAY = OFF           // Peripheral Module Disable Configuration (Allow multiple reconfigurations)
