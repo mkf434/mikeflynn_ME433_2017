@@ -49,9 +49,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/*
- * 
- */
+
+// Helper Function Prototypes
 
 
 int main(int argc, char** argv) {

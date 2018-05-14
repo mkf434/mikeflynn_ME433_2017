@@ -7,7 +7,6 @@
       <itemPath>main6.c</itemPath>
       <itemPath>ILI9163C.c</itemPath>
       <itemPath>ILI9163C.h</itemPath>
-      <itemPath>ILI9163C_settings.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
