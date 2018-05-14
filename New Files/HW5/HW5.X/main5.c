@@ -78,20 +78,27 @@ void main(void) {
     
     
     while(1){
-        
+            
             _CP0_SET_COUNT(0);
             while(_CP0_GET_COUNT()<48000){;}
-    
+            level = 0x00;
             level = getExpander();
             setExpander(pin,level);
-    }
+            
+            // LATAbits.LATA4 = 0;                                     // A4 is on initially
+             // _CP0_SET_COUNT(0);
+             // while(_CP0_GET_COUNT()<24000000){;}
+             // LATAbits.LATA4 = 1;  
+           
+            
+   }
     
 }
 
 // Helper Function Prototypes
 
 // I2C Master utilities, 100 kHz, using polling rather than interrupts
-// The functions must be callled in the correct order as per the I2C protocol
+// The functions must be called in the correct order as per the I2C protocol
 // Change I2C1 to the I2C channel you are using
 // I2C pins need pull-up resistors, 2k-10k
 
@@ -183,45 +190,30 @@ void setExpander(char pin, char level){
   unsigned char OLAT_REG = 0x0A;       // OLAT register address on MCP23008
   unsigned char LED_ON = 0x03;         // Make GP0 high, turning on the LED
   unsigned char LED_OFF = 0x02;        // Make Gp0 low, turning off the LED
-  unsigned char flip;
   
-  if(level==0x82|level==0x83) 
-    {
-        i2c_master_start();                  // Begin the start sequence
-        i2c_master_send(SLAVE_ADDR_WRITE);         // send the slave address
-        i2c_master_send(OLAT_REG);           // send iodir register address     
-        i2c_master_send(LED_ON);             // send iodir register bit values
-        i2c_master_stop(); 
-        
-        LATAbits.LATA4 = 1;                                     // A4 is on initially
-         _CP0_SET_COUNT(0);
-            while(_CP0_GET_COUNT()<24000000){;}
-        LATAbits.LATA4 = 0;                                     // A4 is on initially
-
-        
-  } else if(level==0x02|level==0x03){
+  if(level==0x02|level==0x03){
               i2c_master_start();                  // Begin the start sequence
               i2c_master_send(SLAVE_ADDR_WRITE);         // send the slave address
               i2c_master_send(OLAT_REG);           // send iodir register address     
-              i2c_master_send(LED_OFF);            // send iodir register bit values
+              i2c_master_send(0x02);            // send iodir register bit values
               i2c_master_stop(); 
 
-              LATAbits.LATA4 = 0;                                     // A4 is on initially
-              _CP0_SET_COUNT(0);
-              while(_CP0_GET_COUNT()<24000000){;}
               LATAbits.LATA4 = 1;                                     // A4 is on initially
+              _CP0_SET_COUNT(0);
+              while(_CP0_GET_COUNT()<48000){;}
+              LATAbits.LATA4 = 0;                                     // A4 is on initially
 
   } else {
               i2c_master_start();                  // Begin the start sequence
               i2c_master_send(SLAVE_ADDR_WRITE);         // send the slave address
               i2c_master_send(OLAT_REG);           // send iodir register address     
-              i2c_master_send(0x00);            // send iodir register bit values
+              i2c_master_send(0x03);            // send iodir register bit values
               i2c_master_stop(); 
 
-              LATAbits.LATA4 = 1;                                     // A4 is on initially
+              LATAbits.LATA4 = 0;                                     // A4 is on initially
               _CP0_SET_COUNT(0);
-              while(_CP0_GET_COUNT()<24000000){;}
-              LATAbits.LATA4 = 0;  
+              while(_CP0_GET_COUNT()<48000){;}
+              LATAbits.LATA4 = 1;  
   }
     
 }
