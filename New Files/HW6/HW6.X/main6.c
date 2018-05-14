@@ -54,13 +54,28 @@
 
 // Helper Function Prototypes
 
-
+void putChar(void);
+void loopString(void);
+void makeProgresBar(void);
 
 // Main Function
 
 void main(void) {
 
     
+    
 }
 
 // Helper Functions
+
+void putChar(void){
+    
+}
+
+void loopString(void){
+    
+}
+
+void makeProgresBar(void){
+    
+}
