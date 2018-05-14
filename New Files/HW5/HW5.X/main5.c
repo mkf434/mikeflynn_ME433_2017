@@ -72,6 +72,7 @@ void setExpander(char pin, char level);     // Change values on the outputs acco
 char getExpander();                         // Figure out if the button is being pressed
 
 // Main Function
+
 void main(void) {
     TRISAbits.TRISA4 = 0;           // A4 is a digital output
     LATAbits.LATA4 = 1;             // A4 is on initially
@@ -94,7 +95,7 @@ void main(void) {
     
 }
 
-// Helper Function Prototypes
+// Helper Functions
 
 // I2C Master utilities, 100 kHz, using polling rather than interrupts
 // The functions must be called in the correct order as per the I2C protocol

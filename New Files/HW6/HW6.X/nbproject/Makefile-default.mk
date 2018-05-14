@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=main6.c
+SOURCEFILES_QUOTED_IF_SPACED=main6.c ILI9163C.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main6.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/main6.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main6.o ${OBJECTDIR}/ILI9163C.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/main6.o.d ${OBJECTDIR}/ILI9163C.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/main6.o
+OBJECTFILES=${OBJECTDIR}/main6.o ${OBJECTDIR}/ILI9163C.o
 
 # Source Files
-SOURCEFILES=main6.c
+SOURCEFILES=main6.c ILI9163C.c
 
 
 CFLAGS=
@@ -112,12 +112,24 @@ ${OBJECTDIR}/main6.o: main6.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/main6.o 
 	@${FIXDEPS} "${OBJECTDIR}/main6.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/main6.o.d" -o ${OBJECTDIR}/main6.o main6.c    -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
+${OBJECTDIR}/ILI9163C.o: ILI9163C.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/ILI9163C.o.d 
+	@${RM} ${OBJECTDIR}/ILI9163C.o 
+	@${FIXDEPS} "${OBJECTDIR}/ILI9163C.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/ILI9163C.o.d" -o ${OBJECTDIR}/ILI9163C.o ILI9163C.c    -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
 else
 ${OBJECTDIR}/main6.o: main6.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/main6.o.d 
 	@${RM} ${OBJECTDIR}/main6.o 
 	@${FIXDEPS} "${OBJECTDIR}/main6.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/main6.o.d" -o ${OBJECTDIR}/main6.o main6.c    -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/ILI9163C.o: ILI9163C.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/ILI9163C.o.d 
+	@${RM} ${OBJECTDIR}/ILI9163C.o 
+	@${FIXDEPS} "${OBJECTDIR}/ILI9163C.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/ILI9163C.o.d" -o ${OBJECTDIR}/ILI9163C.o ILI9163C.c    -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
 endif
 
