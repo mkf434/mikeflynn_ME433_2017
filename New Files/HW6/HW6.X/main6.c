@@ -50,11 +50,12 @@
 #include <xc.h>                         // Pretty standard header files
 #include <stdio.h>
 #include <stdlib.h>
-#include <ILI9163C.h>
+#include "ILI9163C.h"
+#include <math.h>
 
 // Helper Function Prototypes
 
-void putChar(void);
+void putChar(char *letter);
 void loopString(void);
 void makeProgresBar(void);
 
@@ -62,13 +63,18 @@ void makeProgresBar(void);
 
 void main(void) {
 
+    SPI1_init();
+    
+    while(1){;}
     
     
 }
 
 // Helper Functions
 
-void putChar(void){
+void putChar(char *letter){
+    
+    
     
 }
 
