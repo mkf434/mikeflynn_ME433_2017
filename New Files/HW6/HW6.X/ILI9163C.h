@@ -152,8 +152,8 @@ static const char ASCII[96][5] = {
 #define CMD_NGAMMAC		0xE1//Negative Gamma Correction Setting
 #define CMD_GAMRSEL		0xF2//GAM_R_SEL
 
-#define _GRAMWIDTH 128
-#define _GRAMHEIGH 128 //160
+#define _GRAMWIDTH 129
+#define _GRAMHEIGH 130 //160
 #define _GRAMSIZE  _GRAMWIDTH * _GRAMHEIGH
 
 #define	BLACK     0x0000

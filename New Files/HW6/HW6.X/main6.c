@@ -69,10 +69,22 @@ void main(void) {
     TRISAbits.TRISA4 = 0;           // B7 is a digital output
     LATAbits.LATA4 = 1;             // B7 is on initially
     
-    LCD_clearScreen(BLUE);
+    LCD_clearScreen(BLACK);
     
-    //putChar(ASCII[0x4d],50,50,RED);
-    //putChar(ASCII[0x46],56,50,RED);
+    putChar(ASCII[1],50,50,WHITE);
+    putChar(ASCII[1],56,50,WHITE);
+    
+    const char *penis = {0x66,0x99,0x99,0x66,0x18,0x42,0x42,0x24,0x18};
+    
+    //LCD_drawPixel(50,60,RED);
+    //LCD_drawPixel(56,60,RED);
+    
+    //putChar(ASCII[0x3D],20,50,RED);
+    //putChar(ASCII[0x3D],30,50,RED);
+    
+    //LCD_clearScreen(BLUE);
+    
+    
     
     
     
@@ -85,26 +97,27 @@ void putChar(const char *letter, unsigned short x, unsigned short y, unsigned sh
     int ii = 0;
     int jj = 0;
     
-    char bits[8] = {0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80};
+    char bits[8] = {0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01};
+    int num_iis = (sizeof(letter)/sizeof(letter[0]));
     
-    if(x < 126 && y < 126){
-        while(ii<5){  
+ 
+        while(ii<num_iis){  
             while(jj<8){
                         
-                if(bits[jj]&((letter[ii]<<(7-jj))>>(jj))){
-                        
-                    LCD_drawPixel(x+ii,y+jj,color);
-                                
+                if(bits[7-jj]&&(bits[7-jj]&(letter[ii]))){
+                    if((x+ii) < 130 && (x-ii) > 0 && (y+jj) < 131 && (y-jj) > 0){
+                        LCD_drawPixel(x+ii,y+jj,color);
+                    }            
                 }            
  
                 jj++;
             
             }
-            
+            jj = 0;
             ii++;
             
         }
-    }
+    
     
     
     
