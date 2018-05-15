@@ -56,8 +56,8 @@
 // Helper Function Prototypes
 
 void putChar(const char *letter, unsigned short x, unsigned short y, unsigned short color);
-void loopString(void);
-void makeProgresBar(void);
+void loopString(const char *string, unsigned short x, unsigned short y, unsigned short color);
+void makeProgresBar(int bar_length);
 
 // Main Function
 
@@ -66,15 +66,14 @@ void main(void) {
     SPI1_init();
     LCD_init();
     
-    TRISAbits.TRISA4 = 0;           // B7 is a digital output
-    LATAbits.LATA4 = 1;             // B7 is on initially
+    TRISAbits.TRISA4 = 0;           // A7 is a digital output
+    LATAbits.LATA4 = 1;             // A7 is on initially
     
     LCD_clearScreen(BLACK);
-    
-    putChar(ASCII[1],50,50,WHITE);
-    putChar(ASCII[1],56,50,WHITE);
-    
-    const char *penis = {0x66,0x99,0x99,0x66,0x18,0x42,0x42,0x24,0x18};
+   
+    char string[200];
+    sprintf(string, "How are ya bob");
+    loopString(string, 10, 10, WHITE);
     
     //LCD_drawPixel(50,60,RED);
     //LCD_drawPixel(56,60,RED);
@@ -98,10 +97,10 @@ void putChar(const char *letter, unsigned short x, unsigned short y, unsigned sh
     int jj = 0;
     
     char bits[8] = {0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01};
-    int num_iis = (sizeof(letter)/sizeof(letter[0]));
+    int num_iis = *(&letter + 1) - letter;
     
  
-        while(ii<num_iis){  
+        while(ii<5){  
             while(jj<8){
                         
                 if(bits[7-jj]&&(bits[7-jj]&(letter[ii]))){
@@ -123,10 +122,31 @@ void putChar(const char *letter, unsigned short x, unsigned short y, unsigned sh
     
 }
 
-void loopString(void){
+void loopString(const char *str, unsigned short x, unsigned short y, unsigned short color){
+    
+    int ii = 0; 
+    int letter = 0; 
+    int nextline = 0;
+    
+    int x1 = x;
+    int y1 = y;
+    
+    while(str[ii]){
+        
+        letter = (int) str[ii];
+        letter = letter - 32;
+        if(x+(6*ii)>125){ nextline = nextline + 1; x1 = 5; }
+        putChar(ASCII[letter],x1+(6*ii),y1+(9*nextline), color);
+        ii++;    
+        
+    }
     
 }
 
-void makeProgresBar(void){
+void makeProgresBar(int bar_length){
+    
+    
+    
+    
     
 }
