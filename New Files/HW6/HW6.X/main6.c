@@ -57,7 +57,7 @@
 
 void putChar(const char *letter, unsigned short x, unsigned short y, unsigned short color);
 void loopString(const char *string, unsigned short x, unsigned short y, unsigned short color);
-void makeProgresBar(int bar_length);
+void makeProgressBar(int bar_length, unsigned short x, unsigned y,int status);
 
 // Main Function
 
@@ -74,17 +74,67 @@ void main(void) {
     char string[200];
     sprintf(string, "How are ya bob");
     loopString(string, 10, 10, WHITE);
+  
+    _CP0_SET_COUNT(0);
+    while(_CP0_GET_COUNT()<48000000){;}
     
-    //LCD_drawPixel(50,60,RED);
-    //LCD_drawPixel(56,60,RED);
+    LCD_clearScreen(BLACK);
     
-    //putChar(ASCII[0x3D],20,50,RED);
-    //putChar(ASCII[0x3D],30,50,RED);
-    
-    //LCD_clearScreen(BLUE);
-    
+    int gg = 0;
+    char string1[200];
+    _CP0_SET_COUNT(0);
+    while(_CP0_GET_COUNT()<4800000){;}
     
     
+    
+       
+    sprintf(string1, "Hello World!");
+    
+    loopString(string1, 28, 32, WHITE);
+    
+    
+    
+    //makeProgressBar(20,28,62,gg);
+    
+    int xx = 0; 
+    const char bar[5] = {0xFF, 0x00, 0x00, 0x00, 0x00};
+    const char bar2[5] = {0x81, 0x00, 0x00, 0x00, 0x00};
+    const char black[5]= {0xFF,0xFF, 0xFF,0xFF, 0xFF};
+    
+    putChar(bar,15,62,WHITE);
+    _CP0_SET_COUNT(0);
+    while(_CP0_GET_COUNT()<4800000){;}
+    sprintf(string1, "     Percent");
+    loopString(string1, 28, 90, WHITE);
+    
+    while(1){
+    
+    while(xx<100){
+        
+        loopString(black,28, 90, BLACK);
+        //sprintf(string1, "%d",xx);
+        //loopString(string1, 28, 90, WHITE);
+        
+        putChar(bar,15+xx,62,WHITE);
+        xx++;
+        _CP0_SET_COUNT(0);
+        while(_CP0_GET_COUNT()<240000){;}
+        
+    }
+    _CP0_SET_COUNT(0);
+    while(_CP0_GET_COUNT()<4800000){;}
+    
+    putChar(bar,15+xx,62,WHITE);
+    _CP0_SET_COUNT(0);
+    while(_CP0_GET_COUNT()<4800000){;}
+    
+    sprintf(string1, "100  Percent");
+    loopString(string1, 28, 90, WHITE);
+    
+    }
+    
+    
+    //}
     
     
 }
@@ -143,10 +193,15 @@ void loopString(const char *str, unsigned short x, unsigned short y, unsigned sh
     
 }
 
-void makeProgresBar(int bar_length){
+void makeProgressBar(int bar_length, unsigned short x, unsigned y,int status){
     
+    int xx = 0; 
+
+    putChar(0xFF,x,y,WHITE);
+    while(xx<bar_length){  
+        putChar(0x81,x+xx,y,WHITE);
+        
+    }
     
-    
-    
-    
+    putChar(0xFF,x+xx,y,WHITE);
 }
