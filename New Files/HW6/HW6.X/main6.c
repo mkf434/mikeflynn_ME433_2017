@@ -55,7 +55,7 @@
 
 // Helper Function Prototypes
 
-void putChar(char *letter);
+void putChar(const char *letter, unsigned short x, unsigned short y, unsigned short color);
 void loopString(void);
 void makeProgresBar(void);
 
@@ -64,15 +64,47 @@ void makeProgresBar(void);
 void main(void) {
 
     SPI1_init();
+    LCD_init();
     
-    while(1){;}
+    TRISAbits.TRISA4 = 0;           // B7 is a digital output
+    LATAbits.LATA4 = 1;             // B7 is on initially
+    
+    LCD_clearScreen(BLUE);
+    
+    //putChar(ASCII[0x4d],50,50,RED);
+    //putChar(ASCII[0x46],56,50,RED);
+    
     
     
 }
 
 // Helper Functions
 
-void putChar(char *letter){
+void putChar(const char *letter, unsigned short x, unsigned short y, unsigned short color){
+    
+    int ii = 0;
+    int jj = 0;
+    
+    char bits[8] = {0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80};
+    
+    if(x < 126 && y < 126){
+        while(ii<5){  
+            while(jj<8){
+                        
+                if(bits[jj]&((letter[ii]<<(7-jj))>>(jj))){
+                        
+                    LCD_drawPixel(x+ii,y+jj,color);
+                                
+                }            
+ 
+                jj++;
+            
+            }
+            
+            ii++;
+            
+        }
+    }
     
     
     
