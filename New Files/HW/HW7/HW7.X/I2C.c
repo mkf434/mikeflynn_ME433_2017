@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static const char SAD_WRITE = 0xD7;
-static const char SAD_READ = 0xD6;
+static const char SAD_WRITE = 0xD6;
+static const char SAD_READ = 0xD7;
 
 // I2C Master utilities, 100 kHz, using polling rather than interrupts
 // The functions must be called in the correct order as per the I2C protocol
@@ -16,7 +16,7 @@ void i2c_master_setup(void) {
   ANSELBbits.ANSB2 = 0;               // Turn of default analog input on B2 and B3
   ANSELBbits.ANSB3 = 0;
   
-  I2C2BRG = 53;                    // I2CBRG = [1/(2*Fsck) - PGD]*Pblck - 2 
+  I2C2BRG = 55;                    // I2CBRG = [1/(2*Fsck) - PGD]*Pblck - 2 
                                     // PGD = 104 ns, 100hz for now, Pbclk = 48 MHz                          
   I2C2CONbits.ON = 1;               // turn on the I2C2 module
   
@@ -84,10 +84,10 @@ unsigned char getMessage(unsigned char registr){     // Change values on the out
   i2c_master_start();                  // Begin the start sequence
   i2c_master_send(SAD_WRITE);   // Send the slave address
   i2c_master_send(registr);               // Write to GPIO register
-  i2c_master_restart();                // Send a RESTART so we can begin reading 
+  i2c_master_start();                // Send a START so we can begin reading 
   i2c_master_send(SAD_READ);    // Send the slave address
   unsigned char r = i2c_master_recv(); // Save the value of GP7
-  i2c_master_ack(1);                   // Make the ack so the slave knows we got it
+  i2c_master_ack(1);                   // Make the nack so the slave knows we got it
   i2c_master_stop();                   // Make the stop bit
   
   return r; 

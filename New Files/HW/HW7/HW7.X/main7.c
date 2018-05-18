@@ -52,24 +52,65 @@
 #include "ILI9163C.h"
 #include "I2C.h"
 #include "LCD.h"
+
+#define WHO_AM_I 0x0F
+
 // Helper Function Prototypes
-
-void function(void);
-
-// Main Function 
-
 void main(void) {
     
-    TRISAbits.TRISA4 = 0; 
-    LATAbits.LATA4 = 1; 
+     LCDinit();
+     initPololu();
+    
+    clearScreen();
+    _CP0_SET_COUNT(0);
+    while(_CP0_GET_COUNT()<48000000){;}
+    
+    char string[200];
+    sprintf(string, "Loading");
+    writeString(string,20,20,WHITE);
+    _CP0_SET_COUNT(0);
+    while(_CP0_GET_COUNT()<48000000){;}
+    
+    clearScreen();
+    
+    char string4[200];
+    sprintf(string4, "Talking to Pololu");
+    writeString(string4,20,20,WHITE);
+    _CP0_SET_COUNT(0);
+    while(_CP0_GET_COUNT()<48000000){;}
+    
+    
+    
+    unsigned char r;
+    
+    r = getMessage(WHO_AM_I);
+    
+    clearScreen();
+    
+    if(r==0x69) {
+    
+    char string2[200];
+    sprintf(string2, "Success");
+    writeString(string2,20,20,WHITE);
+    _CP0_SET_COUNT(0);
+    while(_CP0_GET_COUNT()<48000000){;}
+    
+    } else {
+    
+    char string1[200];
+    sprintf(string1, "Keep Trying");
+    writeString(string1,20,20,WHITE);
+    _CP0_SET_COUNT(0);
+    while(_CP0_GET_COUNT()<48000000){;}
+    
+    }
+    
+    
 
     
 }
 
 // Helper Functions
 
-void function(void){
-    
-}
 
 
