@@ -112,13 +112,13 @@ void main(void) {
     while(xx<100){
         
         loopString(black,28, 90, BLACK);
-        //sprintf(string1, "%d",xx);
-        //loopString(string1, 28, 90, WHITE);
+        sprintf(string1, "%d",xx);
+        loopString(string1, 28, 90, WHITE);
         
         putChar(bar,15+xx,62,WHITE);
         xx++;
         _CP0_SET_COUNT(0);
-        while(_CP0_GET_COUNT()<240000){;}
+        while(_CP0_GET_COUNT()<24000000){;}
         
     }
     _CP0_SET_COUNT(0);
@@ -132,11 +132,7 @@ void main(void) {
     loopString(string1, 28, 90, WHITE);
     
     }
-    
-    
-    //}
-    
-    
+
 }
 
 // Helper Functions
@@ -156,7 +152,7 @@ void putChar(const char *letter, unsigned short x, unsigned short y, unsigned sh
                 if(bits[7-jj]&&(bits[7-jj]&(letter[ii]))){
                     if((x+ii) < 130 && (x-ii) > 0 && (y+jj) < 131 && (y-jj) > 0){
                         LCD_drawPixel(x+ii,y+jj,color);
-                    }            
+                    } else {LCD_drawPixel(x+ii,y+jj,BLACK);}            
                 }            
  
                 jj++;

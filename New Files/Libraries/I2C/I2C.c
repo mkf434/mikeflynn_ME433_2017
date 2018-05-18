@@ -16,7 +16,7 @@ void i2c_master_setup(void) {
   ANSELBbits.ANSB2 = 0;               // Turn of default analog input on B2 and B3
   ANSELBbits.ANSB3 = 0;
   
-  I2C2BRG = 53;                    // I2CBRG = [1/(2*Fsck) - PGD]*Pblck - 2 
+  I2C2BRG = 233;                    // I2CBRG = [1/(2*Fsck) - PGD]*Pblck - 2 
                                     // PGD = 104 ns, 100hz for now, Pbclk = 48 MHz                          
   I2C2CONbits.ON = 1;               // turn on the I2C2 module
   
@@ -102,7 +102,7 @@ void getMultipleMessages( unsigned char registr, unsigned char * data, int lengt
     data[x] = getMessage(registr);
     x++;
   }
-  
+
 }
 
 
