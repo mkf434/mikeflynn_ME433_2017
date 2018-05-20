@@ -64,16 +64,40 @@ void writeString(const char *message, unsigned short x, unsigned short y, unsign
 
 void makeBar(unsigned short x, unsigned short y, unsigned short color, int length, int progress){
 	int xx = 0; 
-	int yy = (progress/length)*length;
-
-    putChar(0xFF,x,y,WHITE);
-
-    while(xx<yy){  
-        putChar(0x81,x+xx,y,WHITE);
+    const char bar[5] = {0xFF, 0x00, 0x00, 0x00, 0x00};
+    const char bar2[5] = {0x81, 0x00, 0x00, 0x00, 0x00};
+    
+    putChar(bar,15,62,WHITE);
+    //_CP0_SET_COUNT(0);
+    //while(_CP0_GET_COUNT()<4800000){;}
+    //sprintf(string1, "     Percent");
+    //loopString(string1, 28, 90, WHITE);
+    
+    while(1){
+    
+    while(xx<length){
+        
+        //loopString(black,28, 90, BLACK);
+        //sprintf(string1, "%d",xx);
+        loopString(string1, 28, 90, WHITE);
+        
+        putChar(bar,15+xx,62,WHITE);
+        xx++;
+        _CP0_SET_COUNT(0);
+        while(_CP0_GET_COUNT()<24000000){;}
         
     }
+    _CP0_SET_COUNT(0);
+    while(_CP0_GET_COUNT()<4800000){;}
     
-    putChar(0xFF,x+xx,y,WHITE);
+    putChar(bar,15+xx,62,WHITE);
+    _CP0_SET_COUNT(0);
+    while(_CP0_GET_COUNT()<4800000){;}
+    
+    sprintf(string1, "100  Percent");
+    loopString(string1, 28, 90, WHITE);
+    
+    }
 }
 
 void clearScreen(void){
