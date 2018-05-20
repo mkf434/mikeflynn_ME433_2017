@@ -32,7 +32,7 @@ void putChar(const char *letter, unsigned short x, unsigned short y, unsigned sh
                     if((x+ii) < 130 && (x-ii) > 0 && (y+jj) < 131 && (y-jj) > 0){
                         LCD_drawPixel(x+ii,y+jj,color);
                     }            
-                }            
+                }   else { LCD_drawPixel(x+ii,y+jj,BLACK); }          
  
                 jj++;  
             }

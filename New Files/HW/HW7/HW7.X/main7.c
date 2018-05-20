@@ -54,6 +54,7 @@
 #include "LCD.h"
 
 #define WHO_AM_I 0x0F
+#define OUT_TEMP_L 0x20
 
 // Helper Function Prototypes
 void main(void) {
@@ -62,53 +63,111 @@ void main(void) {
      initPololu();
     
     clearScreen();
-    _CP0_SET_COUNT(0);
-    while(_CP0_GET_COUNT()<48000000){;}
+    //_CP0_SET_COUNT(0);
+    //while(_CP0_GET_COUNT()<48000000){;}
     
     char string[200];
-    sprintf(string, "Loading");
+    sprintf(string, "Loading Success");
     writeString(string,20,20,WHITE);
-    _CP0_SET_COUNT(0);
-    while(_CP0_GET_COUNT()<48000000){;}
+    //_CP0_SET_COUNT(0);
+    //while(_CP0_GET_COUNT()<48000000){;}
     
     clearScreen();
     
     char string4[200];
     sprintf(string4, "Talking to Pololu");
     writeString(string4,20,20,WHITE);
-    _CP0_SET_COUNT(0);
-    while(_CP0_GET_COUNT()<48000000){;}
+    //_CP0_SET_COUNT(0);
+    //while(_CP0_GET_COUNT()<48000000){;}
+    
+    unsigned char data[200];
+    
+    short temp;
+    short gyro_X;
+    short gyro_Y;
+    short gyro_Z;
+    short accel_X;
+    short accel_Y;
+    short accel_Z;
+    
+    short data2[7];
+    char string5[10];
+    
+    int y = 0;
     
     
+    while(y<100){
+        
+        _CP0_SET_COUNT(0);
+    while(_CP0_GET_COUNT()<2400000){;}              // Wait 12000*200 = 1 ms*200 = .2 s = 5 hz
     
-    unsigned char r;
+    getMultipleMessages(OUT_TEMP_L,data,14);
+        
+    temp = (data[0]<<4)|data[1];
+    data2[0] = temp;
+    gyro_X = (data[2]<<4)|data[3];
+    data2[1] = gyro_X;
+    gyro_Y = (data[4]<<4)|data[5];
+    data2[2] = gyro_Y;
+    gyro_Z = (data[6]<<4)|data[7];
+    data2[3] = gyro_Z;
+    accel_X = (data[8]<<4)|data[9];
+    data2[4] = accel_X;
+    accel_Y = (data[10]<<4)|data[11];
+    data2[5] = accel_Y;
+    accel_Z = (data[12]<<4)|data[13];
+    data2[6] = accel_Z;
+    int xxx = 0; 
     
-    r = getMessage(WHO_AM_I);
-    
+    y = y + 1;
     clearScreen();
     
-    if(r==0x69) {
-    
-    char string2[200];
-    sprintf(string2, "Success");
-    writeString(string2,20,20,WHITE);
-    _CP0_SET_COUNT(0);
-    while(_CP0_GET_COUNT()<48000000){;}
-    
-    } else {
-    
-    char string1[200];
-    sprintf(string1, "Keep Trying");
-    writeString(string1,20,20,WHITE);
-    _CP0_SET_COUNT(0);
-    while(_CP0_GET_COUNT()<48000000){;}
+    while(xxx<7){
+        sprintf(string5,"%hu",data2[xxx]);
+        
+        writeString(string5,10,10 + (xxx*10),WHITE);
+        
+        xxx++;
+    }
     
     }
     
     
-
     
 }
+    
+    
+    
+    
+    
+    
+    //unsigned char r;
+    
+    //r = getMessage(WHO_AM_I);
+    
+    //clearScreen();
+    
+   //if(r==0x69) {
+    
+    //char string2[200];
+    //sprintf(string2, "Success");
+   // writeString(string2,20,20,WHITE);
+   // _CP0_SET_COUNT(0);
+   // while(_CP0_GET_COUNT()<48000000){;}
+    
+  //  } else {
+    
+    //char string1[200];
+    //sprintf(string1, "Keep Trying");
+    //writeString(string1,20,20,WHITE);
+    //_CP0_SET_COUNT(0);
+    //while(_CP0_GET_COUNT()<48000000){;}
+    
+    //}
+    
+    
+
+    
 
 // Helper Functions
 
