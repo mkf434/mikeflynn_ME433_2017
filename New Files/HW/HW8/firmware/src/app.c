@@ -58,6 +58,15 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #include "ILI9163C.h"
 #include "LCD.h"
 
+#include <xc.h>                         // Pretty standard header files
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+
+#define WHO_AM_I 0x0F
+#define OUT_TEMP_L 0x20
+
 
 
 // *****************************************************************************

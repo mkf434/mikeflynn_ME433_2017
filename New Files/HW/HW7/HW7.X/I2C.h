@@ -14,7 +14,7 @@ void i2c_master_stop(void);                 // Send a stop
 void sendMessage(unsigned char address, unsigned char message);
 unsigned char getMessage(unsigned char registr);
 void initPololu(void);
-void getMultipleMessages(unsigned char registr, unsigned char * data, int length);
+void getMultipleMessages(unsigned char registr, unsigned char * dat, int length);
 
 
 #endif

@@ -48,6 +48,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <sys/attribs.h>
 
 #include "ILI9163C.h"
 #include "I2C.h"
@@ -55,6 +56,7 @@
 
 #define WHO_AM_I 0x0F
 #define OUT_TEMP_L 0x20
+#define OUT_TEMP_H 0x21
 
 // Helper Function Prototypes
 void main(void) {
@@ -67,10 +69,38 @@ void main(void) {
     //while(_CP0_GET_COUNT()<48000000){;}
     
     char string[200];
-    sprintf(string, "Loading Success");
+    sprintf(string, "Loading");
     writeString(string,20,20,WHITE);
     //_CP0_SET_COUNT(0);
     //while(_CP0_GET_COUNT()<48000000){;}
+    
+    unsigned char r;
+    unsigned char r2;
+    unsigned char r3; 
+    
+    r = getMessage(WHO_AM_I);
+    r2 = getMessage(OUT_TEMP_L);
+    r3 = getMessage(OUT_TEMP_H);
+    
+    clearScreen();
+    
+   if(r==0x69) {
+    
+    char string2[200];
+    sprintf(string2, "Success");
+    writeString(string2,20,20,WHITE);
+    _CP0_SET_COUNT(0);
+    while(_CP0_GET_COUNT()<48000000){;}
+    
+    } else {
+    
+    char string1[200];
+    sprintf(string1, "Keep Trying");
+    writeString(string1,20,20,WHITE);
+    _CP0_SET_COUNT(0);
+    while(_CP0_GET_COUNT()<48000000){;}
+    
+    }
     
     clearScreen();
     
@@ -82,48 +112,53 @@ void main(void) {
     
     unsigned char data[200];
     
-    short temp;
-    short gyro_X;
-    short gyro_Y;
-    short gyro_Z;
-    short accel_X;
-    short accel_Y;
-    short accel_Z;
+    int temp;
+    int gyro_X;
+    int gyro_Y;
+    int gyro_Z;
+    int accel_X;
+    int accel_Y;
+    int accel_Z;
     
-    short data2[7];
+    char rr; 
+    
+   
+    
+    
+    int data2[7];
     char string5[10];
     
-    int y = 0;
     
     
-    while(y<100){
+    
+    while(1){
         
         _CP0_SET_COUNT(0);
     while(_CP0_GET_COUNT()<2400000){;}              // Wait 12000*200 = 1 ms*200 = .2 s = 5 hz
     
     getMultipleMessages(OUT_TEMP_L,data,14);
         
-    temp = (data[0]<<4)|data[1];
+    temp = (data[1]<<8)|data[0];
     data2[0] = temp;
-    gyro_X = (data[2]<<4)|data[3];
+    gyro_X = (data[3]<<8)|data[2];
     data2[1] = gyro_X;
-    gyro_Y = (data[4]<<4)|data[5];
+    gyro_Y = (data[5]<<8)|data[4];
     data2[2] = gyro_Y;
-    gyro_Z = (data[6]<<4)|data[7];
+    gyro_Z = (data[7]<<8)|data[6];
     data2[3] = gyro_Z;
-    accel_X = (data[8]<<4)|data[9];
+    accel_X = (data[9]<<8)|data[8];
     data2[4] = accel_X;
-    accel_Y = (data[10]<<4)|data[11];
+    accel_Y = (data[11]<<8)|data[10];
     data2[5] = accel_Y;
-    accel_Z = (data[12]<<4)|data[13];
+    accel_Z = (data[13]<<8)|data[12];
     data2[6] = accel_Z;
+    
     int xxx = 0; 
     
-    y = y + 1;
     clearScreen();
     
     while(xxx<7){
-        sprintf(string5,"%hu",data2[xxx]);
+        sprintf(string5,"%d",data2[xxx]);
         
         writeString(string5,10,10 + (xxx*10),WHITE);
         

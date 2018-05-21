@@ -109,7 +109,7 @@ unsigned char getMessage(unsigned char registr){     // Change values on the out
     
 }
 
-void getMultipleMessages( unsigned char registr, unsigned char * data, int length) {
+void getMultipleMessages( unsigned char registr, unsigned char * dat, int length) {
   int x = 0; 
   
     i2c_master_start();                  // Begin the start sequence
@@ -121,7 +121,7 @@ void getMultipleMessages( unsigned char registr, unsigned char * data, int lengt
   while(x<length){
       
     
-    data[x] = i2c_master_recv(); // Save the value of GP7
+    dat[x] = i2c_master_recv(); // Save the value of GP7
     if(x<length-1){ i2c_master_ack(0); }                  // Make the ack so the slave knows we want more data
     if(x==(length-1)) { i2c_master_ack(1); i2c_master_stop(); }
     
