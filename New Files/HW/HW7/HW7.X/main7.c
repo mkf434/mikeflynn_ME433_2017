@@ -65,14 +65,6 @@ void main(void) {
      initPololu();
     
     clearScreen();
-    //_CP0_SET_COUNT(0);
-    //while(_CP0_GET_COUNT()<48000000){;}
-    
-    char string[200];
-    sprintf(string, "Loading");
-    writeString(string,20,20,WHITE);
-    //_CP0_SET_COUNT(0);
-    //while(_CP0_GET_COUNT()<48000000){;}
     
     unsigned char r;
     unsigned char r2;
@@ -107,29 +99,23 @@ void main(void) {
     char string4[200];
     sprintf(string4, "Talking to Pololu");
     writeString(string4,20,20,WHITE);
-    //_CP0_SET_COUNT(0);
-    //while(_CP0_GET_COUNT()<48000000){;}
+    
+    _CP0_SET_COUNT(0);
+    while(_CP0_GET_COUNT()<48000000){;}
     
     unsigned char data[200];
     
-    int temp;
-    int gyro_X;
-    int gyro_Y;
-    int gyro_Z;
-    int accel_X;
-    int accel_Y;
-    int accel_Z;
+    unsigned short temp;
+    unsigned short gyro_X;
+    unsigned short gyro_Y;
+    unsigned short gyro_Z;
+    unsigned short accel_X;
+    unsigned short accel_Y;
+    unsigned short accel_Z;
     
-    char rr; 
-    
-   
-    
-    
-    int data2[7];
+    char rr;    
+    unsigned short data2[7];
     char string5[10];
-    
-    
-    
     
     while(1){
         
@@ -153,7 +139,7 @@ void main(void) {
     accel_Z = (data[13]<<8)|data[12];
     data2[6] = accel_Z;
     
-    int xxx = 0; 
+    int xxx = 4; 
     
     clearScreen();
     
@@ -170,36 +156,7 @@ void main(void) {
     
     
 }
-    
-    
-    
-    
-    
-    
-    //unsigned char r;
-    
-    //r = getMessage(WHO_AM_I);
-    
-    //clearScreen();
-    
-   //if(r==0x69) {
-    
-    //char string2[200];
-    //sprintf(string2, "Success");
-   // writeString(string2,20,20,WHITE);
-   // _CP0_SET_COUNT(0);
-   // while(_CP0_GET_COUNT()<48000000){;}
-    
-  //  } else {
-    
-    //char string1[200];
-    //sprintf(string1, "Keep Trying");
-    //writeString(string1,20,20,WHITE);
-    //_CP0_SET_COUNT(0);
-    //while(_CP0_GET_COUNT()<48000000){;}
-    
-    //}
-    
+   
     
 
     
