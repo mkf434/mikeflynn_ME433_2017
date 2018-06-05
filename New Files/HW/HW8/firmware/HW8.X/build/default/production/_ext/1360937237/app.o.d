@@ -1,5 +1,8 @@
 build/default/production/_ext/1360937237/app.o:  \
 ../src/app.c  \
+ ../src/ILI9163C.h  \
+../src/I2C.h  \
+../src/LCD.h  \
 ../src/app.h  \
  ../src/system_config/default/system_config.h  \
  ../src/system_config/default/system_definitions.h  \
@@ -118,7 +121,4 @@ build/default/production/_ext/1360937237/app.o:  \
  ../../../../../../microchip/harmony/v2_05_01/framework/peripheral/ports/processor/../templates/ports_ChangeNoticeEdgeControl_Unsupported.h  \
  ../../../../../../microchip/harmony/v2_05_01/framework/peripheral/ports/processor/../templates/ports_ChangeNoticeEdgeStatus_Unsupported.h  \
  ../../../../../../microchip/harmony/v2_05_01/framework/peripheral/ports/plib_ports_compatibility.h  \
- ../src/app.h  \
-../src/I2C.h  \
-../src/ILI9163C.h  \
-../src/LCD.h 
+ ../src/app.h 

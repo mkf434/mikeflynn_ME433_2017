@@ -9,6 +9,7 @@ void writeString(const char *message, unsigned short x, unsigned short y, unsign
 void makeBar(unsigned short x, unsigned short y, unsigned short color, int length, int progress);
 void clearScreen(void);
 void fillScreen(unsigned short color);
+void clearChar(unsigned short x, unsigned short y);
 
 
 #endif

@@ -53,19 +53,22 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 // *****************************************************************************
 // *****************************************************************************
 
-#include "app.h"
-#include "I2C.h"
-#include "ILI9163C.h"
-#include "LCD.h"
-
 #include <xc.h>                         // Pretty standard header files
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <sys/attribs.h>
+
+#include "ILI9163C.h"
+#include "I2C.h"
+#include "LCD.h"
+
+#include "app.h"
 
 
 #define WHO_AM_I 0x0F
 #define OUT_TEMP_L 0x20
+#define OUT_TEMP_H 0x21
 
 
 
@@ -134,6 +137,7 @@ void APP_Initialize ( void )
     TRISAbits.TRISA4 = 0;             // A4 is a digital output
     LATAbits.LATA4 = 0;               // A4 is off initially
     TRISBbits.TRISB4 = 1;             // B4 is an input 
+    
 
     
     /* TODO: Initialize your application's state machine and other
@@ -168,78 +172,147 @@ void APP_Tasks ( void )
                 
                 LCDinit();
                 initPololu();
-    
+
                 clearScreen();
-                //_CP0_SET_COUNT(0);
-                //while(_CP0_GET_COUNT()<48000000){;}
-    
-                char string[200];
-                sprintf(string, "Loading Success");
-                writeString(string,20,20,WHITE);
-                //_CP0_SET_COUNT(0);
-                //while(_CP0_GET_COUNT()<48000000){;}
-    
+                
+                char string2[200];
+                sprintf(string2, "HW1 - 2kHz LED");
+                writeString(string2,25,20,WHITE);
+                _CP0_SET_COUNT(0);
+                while(_CP0_GET_COUNT()<24000000){;}
+                
+                
+                
+                
+                
+                int count = 0;
+                while(count<10000){
+                    
+                    
+                
+                    _CP0_SET_COUNT(0);                                  // Set count to 0                        
+                    while(_CP0_GET_COUNT() < 12000) {};                 // Wait .5 ms
+
+                    LATAbits.LATA4 = 1;                                 // A4 off
+
+                    _CP0_SET_COUNT(0); 
+                    while(_CP0_GET_COUNT() < 12000) {};
+
+                    LATAbits.LATA4 = 0; 
+                    
+                    if(count==0){sprintf(string2, "LED Now Blinking");
+                writeString(string2,20,40,WHITE);}
+                    
+                    count++;                                            // A4 on
+                }
+                
                 clearScreen();
-    
+                
+                
+                sprintf(string2, "HW7 - IMU");
+                writeString(string2,40,10,WHITE);
+                _CP0_SET_COUNT(0);
+                while(_CP0_GET_COUNT()<24000000){;}
+                
+                
+
+                unsigned char r;
+                unsigned char r2;
+                unsigned char r3; 
+
+                r = getMessage(WHO_AM_I);
+                r2 = getMessage(OUT_TEMP_L);
+                r3 = getMessage(OUT_TEMP_H);
+
+                
+
+               if(r==0x69) {
+
+                
+                sprintf(string2, "Successful Contact");
+                writeString(string2,15,20,WHITE);
+                _CP0_SET_COUNT(0);
+                while(_CP0_GET_COUNT()<48000000){;}
+
+                } else {
+
+                char string1[200];
+                sprintf(string1, "Keep Trying");
+                writeString(string1,30,60,WHITE);
+                _CP0_SET_COUNT(0);
+                while(_CP0_GET_COUNT()<48000000){;}
+
+                }
+
+                
+
                 char string4[200];
                 sprintf(string4, "Talking to Pololu");
-                writeString(string4,20,20,WHITE);
-                //_CP0_SET_COUNT(0);
-                //while(_CP0_GET_COUNT()<48000000){;}
+                writeString(string4,17,30,WHITE);
+
+                _CP0_SET_COUNT(0);
+                while(_CP0_GET_COUNT()<48000000){;}
 
                 unsigned char data[200];
 
-                short temp;
-                short gyro_X;
-                short gyro_Y;
-                short gyro_Z;
-                short accel_X;
-                short accel_Y;
-                short accel_Z;
+                unsigned short temp;
+                unsigned short gyro_X;
+                unsigned short gyro_Y;
+                unsigned short gyro_Z;
+                unsigned short accel_X;
+                unsigned short accel_Y;
+                unsigned short accel_Z;
 
-                short data2[7];
+                char rr;    
+                unsigned short data2[7];
                 char string5[10];
+                
+                sprintf(string2, "IMU Now Live");
+                writeString(string2,35,40,WHITE);
 
-                int y = 0;
-
-
-                while(y<100){
+                while(1){
 
                     _CP0_SET_COUNT(0);
                 while(_CP0_GET_COUNT()<2400000){;}              // Wait 12000*200 = 1 ms*200 = .2 s = 5 hz
 
                 getMultipleMessages(OUT_TEMP_L,data,14);
 
-                temp = (data[0]<<4)|data[1];
+                temp = (data[1]<<8)|data[0];
                 data2[0] = temp;
-                gyro_X = (data[2]<<4)|data[3];
+                gyro_X = (data[3]<<8)|data[2];
                 data2[1] = gyro_X;
-                gyro_Y = (data[4]<<4)|data[5];
+                gyro_Y = (data[5]<<8)|data[4];
                 data2[2] = gyro_Y;
-                gyro_Z = (data[6]<<4)|data[7];
+                gyro_Z = (data[7]<<8)|data[6];
                 data2[3] = gyro_Z;
-                accel_X = (data[8]<<4)|data[9];
+                accel_X = (data[9]<<8)|data[8];
                 data2[4] = accel_X;
-                accel_Y = (data[10]<<4)|data[11];
+                accel_Y = (data[11]<<8)|data[10];
                 data2[5] = accel_Y;
-                accel_Z = (data[12]<<4)|data[13];
+                accel_Z = (data[13]<<8)|data[12];
                 data2[6] = accel_Z;
-                int xxx = 0; 
 
-                y = y + 1;
-                clearScreen();
+                int xxx = 4; 
+
+                
 
                 while(xxx<7){
-                    sprintf(string5,"%hu",data2[xxx]);
-
-                    writeString(string5,10,10 + (xxx*10),WHITE);
+                    sprintf(string5,"%d",data2[xxx]);
+                    clearChar(10,(40 + (xxx*10)));
+                    clearChar(15,(40 + (xxx*10)));
+                    clearChar(20,(40 + (xxx*10)));
+                    clearChar(25,(40 + (xxx*10)));
+                    clearChar(30,(40 + (xxx*10)));
+                    clearChar(35,(40 + (xxx*10)));
+                    writeString(string5,10,40 + (xxx*10),WHITE);
 
                     xxx++;
                 }
 
                 }
-    
-    
+
+
+
                 
             }
             break;

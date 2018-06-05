@@ -86,3 +86,23 @@ void fillScreen(unsigned short color){
 	LCD_clearScreen(color);
 
 }
+
+void clearChar(unsigned short x, unsigned short y){
+    
+    int ii = 0;
+    int jj = 0;
+    
+    while(ii<5){ 
+        
+        while(jj<8){
+            
+            LCD_drawPixel(x+ii,y+jj,BLACK);
+            jj++;        
+            
+        }            
+ 
+        jj = 0;
+        ii++;
+            
+    } 
+}
