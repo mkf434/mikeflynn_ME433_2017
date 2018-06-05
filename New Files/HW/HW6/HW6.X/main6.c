@@ -7,6 +7,24 @@
  *  user to draw any ASCII character at a specified location, as well as 
  *  to print out "Hello World" to the TNT LCD using the PIC32MX250F128B
  *  and the ILI9163C controller on the LCD with SPI to do so.
+ * 
+ *  FAQ
+ * 
+ *  How many characters can be displayed on the screen at one time? 
+ * 
+ *  Technically the screen is 128 pixels by 128 pixels, experimentally it was determined
+ *  the screen is actually 130 pixels by 129 pixels, with each character using 5 pixels 
+ *  across and 8 pixels high, that allows for 16 rows and 25 columns of character cells
+ *  or 400 characters in one full frame.
+ * 
+ *  How long does it take to fill an entire row with characters? 
+ * 
+ *  Using the count difference before and after writing 12 characters, it was
+ *  calculated that it takes about .24 ms to write one character, or 5.92 ms 
+ *  to write a whole line, or 94.75 ms to write a frame or a frame rate of about 
+ *  10.55 FPS
+ * 
+ * 
  */
 
 // Preprocessor Commands
@@ -58,6 +76,7 @@
 void putChar(const char *letter, unsigned short x, unsigned short y, unsigned short color);
 void loopString(const char *string, unsigned short x, unsigned short y, unsigned short color);
 void makeProgressBar(int bar_length, unsigned short x, unsigned y,int status);
+void clearChar(unsigned short x, unsigned short y);
 
 // Main Function
 
@@ -72,58 +91,71 @@ void main(void) {
     LCD_clearScreen(BLACK);
    
     char string[200];
-    sprintf(string, "How are ya bob");
-    loopString(string, 10, 10, WHITE);
+    sprintf(string, "Starting");
+    loopString(string, 45 , 60, WHITE);
   
     _CP0_SET_COUNT(0);
     while(_CP0_GET_COUNT()<48000000){;}
     
     LCD_clearScreen(BLACK);
-    
-    int gg = 0;
+   
     char string1[200];
-    _CP0_SET_COUNT(0);
-    while(_CP0_GET_COUNT()<4800000){;}
-    
-    
-    
        
     sprintf(string1, "Hello World!");
     
     loopString(string1, 28, 32, WHITE);
+    sprintf(string1, "     Percent");
     
+    loopString(string1, 28, 90, WHITE);
     
+    sprintf(string1, "(      FPS)");
+    loopString(string1, 28, 105, WHITE);
     
-    //makeProgressBar(20,28,62,gg);
     
     int xx = 0; 
+    float div = 1;
+    float time = 0; 
+    
     const char bar[5] = {0xFF, 0x00, 0x00, 0x00, 0x00};
     const char bar2[5] = {0x81, 0x00, 0x00, 0x00, 0x00};
-    const char black[5]= {0xFF,0xFF, 0xFF,0xFF, 0xFF};
-    
-    putChar(bar,15,62,WHITE);
-    _CP0_SET_COUNT(0);
-    while(_CP0_GET_COUNT()<4800000){;}
-    sprintf(string1, "     Percent");
-    loopString(string1, 28, 90, WHITE);
     
     while(1){
     
     while(xx<100){
         
-        loopString(black,28, 90, BLACK);
+        if(xx>10){div = 2;}
+        
+        clearChar(28,90);
+        clearChar(33,90);
+        clearChar(38,90);
         sprintf(string1, "%d",xx);
+        time = _CP0_GET_COUNT();
         loopString(string1, 28, 90, WHITE);
+        time = _CP0_GET_COUNT() - time;
+        clearChar(35,105);
+        clearChar(40,105);
+        clearChar(45,105);
+        clearChar(50,105);
+        clearChar(55,105);
+        time = (time/div)*400;
+        time = time/24000;
+        time = (1000/time);
+        sprintf(string1, "%.2f",time);
+        loopString(string1,35,105,WHITE);
         
         putChar(bar,15+xx,62,WHITE);
         xx++;
         _CP0_SET_COUNT(0);
-        while(_CP0_GET_COUNT()<24000000){;}
+        while(_CP0_GET_COUNT()<4800000){;}
+        
+        if(xx==100){clearChar(28,90);
+        clearChar(33,90);
+        clearChar(38,90);}
         
     }
-    _CP0_SET_COUNT(0);
-    while(_CP0_GET_COUNT()<4800000){;}
     
+        
+        
     putChar(bar,15+xx,62,WHITE);
     _CP0_SET_COUNT(0);
     while(_CP0_GET_COUNT()<4800000){;}
@@ -132,6 +164,8 @@ void main(void) {
     loopString(string1, 28, 90, WHITE);
     
     }
+    
+    while(1){;}
 
 }
 
@@ -181,7 +215,7 @@ void loopString(const char *str, unsigned short x, unsigned short y, unsigned sh
         
         letter = (int) str[ii];
         letter = letter - 32;
-        if(x+(6*ii)>125){ nextline = nextline + 1; x1 = 5; }
+        if(x+(6*ii)>125){ nextline = nextline + 1; x1 = 5; } 
         putChar(ASCII[letter],x1+(6*ii),y1+(9*nextline), color);
         ii++;    
         
@@ -201,3 +235,24 @@ void makeProgressBar(int bar_length, unsigned short x, unsigned y,int status){
     
     putChar(0xFF,x+xx,y,WHITE);
 }
+
+void clearChar(unsigned short x, unsigned short y){
+    int ii = 0;
+    int jj = 0;
+    
+    while(ii<5){ 
+        
+        while(jj<8){
+            
+            LCD_drawPixel(x+ii,y+jj,BLACK);
+            jj++;        
+            
+        }            
+ 
+        jj = 0;
+        ii++;
+            
+    }           
+}
+    
+    
