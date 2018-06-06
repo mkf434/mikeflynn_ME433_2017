@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">HW12_HelloWorld</string>
+    <string name="bar_val">Current Value of the Slider:</string>
+    <dimen name="width">30dp</dimen>
+
 </resources>
